@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
-import { getTicket, reset } from '../features/tickets/ticketSlice';
-import { useParams } from 'react-router-dom';
+import { getTicket, reset, closeTicket } from '../features/tickets/ticketSlice';
+import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
+import { produceWithPatches } from 'immer';
 
 
 const Ticket = () => {
@@ -12,6 +13,7 @@ const Ticket = () => {
     const { ticket, isLoading, isSucces, isError, message } = useSelector((state) => state.tickets);
 
     const params = useParams();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { ticketId } = useParams();
 
@@ -23,6 +25,14 @@ const Ticket = () => {
         dispatch(getTicket(ticketId));
         // eslint-disable-next-line
     }, [isError, message, ticketId])
+
+    // Close ticket
+    const onTicketClose = () => {
+        dispatch(closeTicket(ticketId));
+        toast.success('Ticket closed.');
+
+        navigate('/tickets');
+    }
 
     if (isLoading) {
         return <Spinner />
@@ -36,6 +46,7 @@ const Ticket = () => {
         <div className='ticket-page'>
             <header className="ticket-header">
                 <BackButton url='/tickets' />
+                <h2>Product: {ticket.product}</h2>
                 <h2>
                     Ticket ID: {ticket._id}
                     <span className={`status status-${ticket.status}`}>
@@ -51,6 +62,9 @@ const Ticket = () => {
                     <p>{ticket.description}</p>
                 </div>
             </header>
+            {ticket.status !== 'closed' && (
+                <button onClick={onTicketClose} className="btn btn-block btn-danger">Close Ticket</button>
+            )}
         </div>
     );
 };
