@@ -5,12 +5,11 @@ import { getTicket, reset, closeTicket } from '../features/tickets/ticketSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
-import { produceWithPatches } from 'immer';
 
 
 const Ticket = () => {
 
-    const { ticket, isLoading, isSucces, isError, message } = useSelector((state) => state.tickets);
+    const { ticket, isLoading, isSuccess, isError, message } = useSelector((state) => state.tickets);
 
     const params = useParams();
     const navigate = useNavigate();
